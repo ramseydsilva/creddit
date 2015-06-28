@@ -9,7 +9,7 @@ admin.autodiscover()
 urlpatterns = [
     # admin views
     url(r'^admin/', include(admin.site.urls)),
-    url(r'u/', include('users.urls', namespace="users")),
+    url(r'', include('users.urls', namespace="users")),
     url(r'', include('posts.urls')),
 ]
 

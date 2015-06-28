@@ -3,6 +3,6 @@
 {% block title %}{{ block.super }} - {{ post.category.title }}{% endblock %}
 
 {% block content %}
-    {{ block.super }}
+    {{ block.super.super }}
     {% include "includes/post.html" with post=post main=True main_post=post %}
 {% endblock %}

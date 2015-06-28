@@ -13,6 +13,12 @@ from utils.breadcrumbs import profile_breadcrumbs, inbox_breadcrumbs, unread_bre
 from utils.paginate import get_paginated
 
 
+def login(request):
+    return render_to_response("users/login.html", context, context_instance = RequestContext(request))
+
+def logout(request):
+    return render_to_response("users/logout.html", context, context_instance = RequestContext(request))
+
 def profile(request, username):
     this_user = get_object_or_404(User, username=username)
     posts = Post.objects.filter(user=this_user)
