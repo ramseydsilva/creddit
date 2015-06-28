@@ -24,7 +24,7 @@
                 {% block nav %}{% endblock %}
 
                 {% if user.is_anonymous %}
-                    <li>Login</li>
+                    <li><a href="{% url "users:login" %}?next={{ request.path }}">Login</a></li>
                 {% else %}
                     {% include "includes/user-nav.html" with this_user=user %}
                 {% endif %}

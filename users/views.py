@@ -1,4 +1,5 @@
 from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
@@ -7,17 +8,34 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.conf import settings
 from .models import *
+from utils import redirect
 from posts.models import Post
 from utils.breadcrumbs import profile_breadcrumbs, inbox_breadcrumbs, unread_breadcrumbs, \
     upvoted_breadcrumbs, downvoted_breadcrumbs
 from utils.paginate import get_paginated
 
 
-def login(request):
+def login_view(request, message='', username=""):
+    next = request.REQUEST.get('next', reverse('home'))
+    if request.POST:
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user and user.is_active:
+            login(request, user)
+            return redirect(request)
+        else:
+            message = "Incorrect username/password."
+    context ={
+        'message' : message,
+        'next' : next,
+        'username': username
+    }
     return render_to_response("users/login.html", context, context_instance = RequestContext(request))
 
-def logout(request):
-    return render_to_response("users/logout.html", context, context_instance = RequestContext(request))
+def logout_view(request):
+    logout(request)
+    return redirect(request)
 
 def profile(request, username):
     this_user = get_object_or_404(User, username=username)

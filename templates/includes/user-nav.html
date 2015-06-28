@@ -11,5 +11,10 @@
         {% endif %}
         <li><a href="{% url "users:upvoted" this_user.username %}">Upvoted</a></li>
         <li><a href="{% url "users:downvoted" this_user.username %}">Downvoted</a></li>
+        {% if user == this_user %}
+        <li>
+            <a href="{% url 'users:logout' %}">Logout</a>
+        </li>
+        {% endif %}
     </ul>
 </li>
