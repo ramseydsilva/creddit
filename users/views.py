@@ -10,12 +10,11 @@ from django.conf import settings
 from .models import *
 from utils import redirect
 from posts.models import Post
-from utils.breadcrumbs import profile_breadcrumbs, inbox_breadcrumbs, unread_breadcrumbs, \
-    upvoted_breadcrumbs, downvoted_breadcrumbs
+from utils.breadcrumbs import *
 from utils.paginate import get_paginated
 
 
-def login_view(request, message='', username=""):
+def login_view(request, message="", username=""):
     next = request.REQUEST.get('next', reverse('home'))
     if request.POST:
         username = request.POST['username']
@@ -24,14 +23,42 @@ def login_view(request, message='', username=""):
         if user and user.is_active:
             login(request, user)
             return redirect(request)
+        elif not user.is_active:
+            message = "This user has been deactivated."
         else:
             message = "Incorrect username/password."
     context ={
         'message' : message,
         'next' : next,
-        'username': username
+        'username': username,
+        'breadcrumbs': login_breadcrumbs(next=next)
     }
     return render_to_response("users/login.html", context, context_instance = RequestContext(request))
+
+def register_view(request, message="", username="", email=""):
+    next = request.REQUEST.get('next', reverse('home'))
+    if request.POST:
+        username = request.POST['username']
+        password = request.POST['password']
+        email = request.POST['email']
+        if username and password:
+            if User.objects.filter(username=username).exists():
+                message = "That username is taken"
+            else:
+                user = User.objects.create_user(username, email, password)
+                user = authenticate(username=username, password=password)
+                login(request, user)
+                return redirect(request)
+        else:
+            message = "Both username nd password are required."
+    context ={
+        'message' : message,
+        'next' : next,
+        'username': username,
+        'email': email,
+        'breadcrumbs': register_breadcrumbs(next=next)
+    }
+    return render_to_response("users/register.html", context, context_instance = RequestContext(request))
 
 def logout_view(request):
     logout(request)

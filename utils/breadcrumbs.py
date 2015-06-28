@@ -41,6 +41,16 @@ def profile_breadcrumbs(user, active=True):
     breadcrumbs.append(get_breadcrumb(user.username, user.profile.get_absolute_url(), active=active))
     return breadcrumbs
 
+def login_breadcrumbs(active=True, next="/"):
+    breadcrumbs = home_breadcrumbs()
+    breadcrumbs.append(get_breadcrumb("Login", "%s?next=%s" %(reverse("users:login"), next), active=active))
+    return breadcrumbs
+
+def register_breadcrumbs(active=True, next="/"):
+    breadcrumbs = home_breadcrumbs()
+    breadcrumbs.append(get_breadcrumb("Register", "%s?next=%s" %(reverse("users:register"), next), active=active))
+    return breadcrumbs
+
 def inbox_breadcrumbs(user, active=True):
     breadcrumbs = profile_breadcrumbs(user)
     breadcrumbs.append(get_breadcrumb("Inbox", reverse("users:inbox", args=[user.username]), active=active))
