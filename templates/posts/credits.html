@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {{ block.super }}
+    <h3><a href="{{ post.get_absolute_url }}">{{ post }}</a></h3>
+    {% include "includes/post-info.html" %}
+    <h3>Upvoters</h3>
+    {% include "includes/votes-list.html" with action="creddited" votes=upvotes %}
+    <h3>Downvoters</h3>
+    {% include "includes/votes-list.html" with action="discreddited" votes=downvotes %}
+{% endblock %}

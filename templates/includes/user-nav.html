@@ -1,0 +1,15 @@
+<li>
+    <a href="{% url "users:profile" this_user.username %}">{% if user == this_user %}Profile{% else %}{{ this_user.username }}{% endif %}</a>
+    <ul>
+        {% if user == this_user %}
+        <li>
+            <a href="{% url "users:inbox" this_user.username %}">Inbox</a>
+            <ul>
+                <li><a href="{% url "users:unread" this_user.username %}">Unread</a></li>
+            </ul>
+        </li>
+        {% endif %}
+        <li><a href="{% url "users:upvoted" this_user.username %}">Upvoted</a></li>
+        <li><a href="{% url "users:downvoted" this_user.username %}">Downvoted</a></li>
+    </ul>
+</li>

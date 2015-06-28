@@ -1,0 +1,55 @@
+<html>
+    <head>
+        <title>{{ SETTINGS.title }} - {% block title %}{{ SETTINGS.tagline }}{% endblock %}</title>
+    </head>
+    <body>
+        {% block body %}
+        <header>
+            {% block header %}
+                <h1><a href="{% url "home" %}">{{ SETTINGS.title }}</a></h1>
+            {% endblock %}
+        </header>
+        <hr />
+        <nav>
+            {% include "includes/breadcrumbs.html" %}
+        </nav>
+        <hr />
+        <section>
+            {% block content %}
+            {% endblock %}
+        </section>
+        <hr />
+        <aside>
+            <nav><ul>
+                {% block nav %}{% endblock %}
+
+                {% if user.is_anonymous %}
+                    <li>Login</li>
+                {% else %}
+                    {% include "includes/user-nav.html" with this_user=user %}
+                {% endif %}
+
+                <li>
+                    {% if category %}<a href="{% url "new" category.slug %}">
+                    {% else %}<a href="{% url "new" %}">{% endif %}Submit a new post</a>
+                </li>
+
+                <li>
+                    <span>Categories</span>
+                    <ul>
+                        <li><a href="{% url "home" %}">All</a></li>
+                        {% for category in categories %}
+                        <li><a href="{{ category.get_absolute_url }}">{{ category }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul></nav>
+        </aside>
+        <hr />
+        <footer>
+            {% block footer %}{% endblock %}
+            <p>&copy; Creddit.co 2015. All rights reserved.</p>
+        </footer>
+        {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,7 @@
+<ul>
+    {% for vote in votes %}
+        <li><a href="{{ user.profile.get_absolute_url }}">{{ vote.user.username }}</a> {{ vote.created_date|timesince }} ago</li>
+    {% empty %}
+        <li>Nobody {{ action }} this post.</li>
+    {% endfor %}
+</ul>

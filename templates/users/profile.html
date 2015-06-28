@@ -1,0 +1,10 @@
+{% extends "posts/home.html" %}
+
+{% block nav %}
+    {% if user != this_user %}{% include "includes/user-nav.html" %}{% endif %}
+{% endblock %}
+
+{% block content %}    
+    <h3><a href="{{ this_user.profile.get_absolute_url }}">{{ this_user.username }}</a></h3>
+    {{ block.super }}
+{% endblock %}

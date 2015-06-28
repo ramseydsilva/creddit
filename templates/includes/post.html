@@ -1,0 +1,23 @@
+{% load markdown_deux_tags %}
+
+<div class="post" id="post-{{ post.id }}">
+    <article>
+        {% if main %}<h1><a href="{{ post.get_absolute_url }}">{{ post }}</a></h1>{% endif %}
+        <p>
+            {% if post.url %}<a href="{{ post.url }}">{{ post.url }}</a>{% endif %}
+            {{ post.text|markdown }}
+        </p>        
+        <div class="options">
+            {% include "includes/post-info.html" %}
+        </div>
+    </article>
+    {% if post.children %}
+    <ul class="children">
+        {% for post in post.children.all %}
+            <li>
+                {% include "includes/post.html" with post=post main=False %}
+            </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>

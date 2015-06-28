@@ -53,7 +53,7 @@ else:
     }
 
 ALLOWED_HOSTS = ["*"]
-
+APPEND_SLASH = True
 
 # Application definition
 
@@ -64,6 +64,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrap_pagination',
+    'markdown_deux',
+    'sorl.thumbnail',
+    'posts',
+    'users',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -77,12 +82,14 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
-ROOT_URLCONF = 'sprddit.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(PROJECT_PATH, "templates")
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -90,12 +97,14 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'posts.context_processors.site_settings',
+                'posts.context_processors.main',
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'sprddit.wsgi.application'
+WSGI_APPLICATION = 'wsgi.application'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -115,3 +124,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+SETTINGS = {
+    "title": "Creddit",
+    "tagline": "Building internet credibility"
+}
+
+ITEMS_PER_PAGE = 10

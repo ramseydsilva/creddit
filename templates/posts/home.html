@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {{ block.super }}
+    <ul>
+    {% for post in posts %}
+        <li>
+            <a href="{{ post.get_absolute_url }}">{{ post }}</a><br/>
+            {% include "includes/post-info.html" %}
+        </li>
+    {% empty %}
+        <li class="no-posts">Sorry, no posts to show here.</li>
+    {% endfor %}
+    </ul>
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="?page={{ page|add:-1 }}">&larr; Prev</a>
+        {% endif %}
+        {% if posts %}
+            <a href="?page={{ page|add:1 }}">Next &rarr;</a>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,5 @@
+<ol class="breadcrumb">
+    {% for crumb in breadcrumbs %}
+    <li {% if crumb.active %}class="active"{% endif %}><a href="{{ crumb.url }}">{{ crumb.text }}</a></li>
+    {% endfor %}
+</ol>
