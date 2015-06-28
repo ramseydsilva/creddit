@@ -9,11 +9,9 @@ def subscription(sender, instance, created, raw, using, **kwargs):
         # Subscribe user to his own post
         Subscription(post=instance, user=instance.user).save()
 
-    print kwargs
-    
-    # Send to inbox of people who suscribed to parent
-    if instance.parent:
-        for subscriber in instance.parent.subscribers.all():
-            Inbox(post=instance, user=subscriber).save()
+        # Send to inbox of people who suscribed to parent
+        if instance.parent:
+            for subscriber in instance.parent.subscribers.all():
+                Inbox(post=instance, user=subscriber).save()
 
 post_save.connect(subscription, sender=Post)
