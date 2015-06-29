@@ -5,7 +5,7 @@
     <h3><a href="{{ post.get_absolute_url }}">{{ post }}</a></h3>
     {% include "includes/post-info.html" %}
     <h3>Upvoters</h3>
-    {% include "includes/votes-list.html" with action="creddited" votes=upvotes %}
+    {% include "includes/votes-list.html" with action="upvoted" votes=upvotes %}
     <h3>Downvoters</h3>
-    {% include "includes/votes-list.html" with action="discreddited" votes=downvotes %}
+    {% include "includes/votes-list.html" with action="downvoted" votes=downvotes %}
 {% endblock %}

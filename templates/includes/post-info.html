@@ -3,7 +3,7 @@
 <div class="info">by <a href="{{ post.user.profile.get_absolute_url }}">{{ post.user }}</a> {{ post.created_date|timesince }} ago in <a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></div>
 <a href="{% url 'credits' post.category.slug post.slug %}">{{ post.credit }}</a>
 <a href="{% url 'upvote' post.category.slug post.slug %}?next={{ next }}">Upvote</a>
-<a href="{% url 'downvote' post.category.slug post.slug %}?next={{ next }}">Downvoted</a>
+<a href="{% url 'downvote' post.category.slug post.slug %}?next={{ next }}">Downvote</a>
 <a href="{% url 'post' post.category.slug post.slug %}">Permalink</a>
 {% if post|is_subscribed:user %}
     <a href="{% url 'unsubscribe' post.category.slug post.slug %}?next={{ next }}">Unsubscribe</a>

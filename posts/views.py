@@ -63,6 +63,7 @@ def credits(request, category_slug, post_slug):
 
 @login_required
 def upvote(request, category_slug, post_slug):
+    print post_slug, category_slug
     post = get_object_or_404(Post, slug=post_slug, category__slug=category_slug)
     credit, created = Credit.objects.get_or_create(user=request.user, post=post)
     if created:
