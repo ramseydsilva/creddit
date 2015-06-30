@@ -3,7 +3,8 @@ from .models import Category
 
 def site_settings(request):
     return {
-        'SETTINGS': settings.SETTINGS
+        'SETTINGS': settings.SETTINGS,
+        'js': request.session.get("js", True)
     }
 
 def main(request):

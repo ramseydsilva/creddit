@@ -1,5 +1,18 @@
 {% extends "base.html" %}
 
+{% load staticfiles %}
+
+{% block extra_head %}
+    {% if js %}
+        <script type="text/javascript" src="{% static "creddit/js/libs/requirejs/require-2.1.11.min.js" %}"
+                data-main="{% static "creddit/js/app/main" %}"></script>
+        <script type="text/javascript">
+            subscribed = [];
+        </script>
+    {% endif %}
+        
+{% endblock %}
+
 {% block content %}
     {{ block.super }}
     <ul>

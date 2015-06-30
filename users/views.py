@@ -77,9 +77,7 @@ def profile(request, username):
 @login_required
 def inbox(request, username):
     this_user = get_object_or_404(User, username=username)
-    
     if request.user != this_user: raise PermissionDenied
-    
     inbox = request.user.inbox.all()
     posts = list(Post.objects.filter(id__in=inbox.values('post')))
     context = {
@@ -92,9 +90,7 @@ def inbox(request, username):
 @login_required
 def unread(request, username):
     this_user = get_object_or_404(User, username=username)
-    
     if request.user != this_user: raise PermissionDenied
-    
     inbox = request.user.inbox.filter(read=False)
     posts = list(Post.objects.filter(id__in=inbox.values('post')))
     for entry in inbox:

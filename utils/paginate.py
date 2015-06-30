@@ -6,5 +6,5 @@ def get_paginated(request, entries):
         page = int(request.GET.get("page", 1))
     except:
         page = 1
-    entries = entries[(page-1)*settings.ITEMS_PER_PAGE:page*settings.ITEMS_PER_PAGE]
-    return entries
+    
+    return entries[(page-1)*settings.API_LIMIT_PER_PAGE:page*settings.API_LIMIT_PER_PAGE]

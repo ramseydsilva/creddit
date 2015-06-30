@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, url
 
+
 urlpatterns = patterns('posts.views',
     url(r'^$', 'home', name='home'),
     url(r'^new/$', 'new', name='new'),

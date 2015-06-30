@@ -20,6 +20,10 @@ STATIC_ROOT = os.path.join(PROJECT_PATH, 'served/static/')  # Static files: css,
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = (
+    ("creddit", os.path.join(PROJECT_PATH, 'static')),
+)
+
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -67,8 +71,10 @@ INSTALLED_APPS = (
     'bootstrap_pagination',
     'markdown_deux',
     'sorl.thumbnail',
+    'tastypie',
+    'api',
     'posts',
-    'users',
+    'users'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -130,4 +136,5 @@ SETTINGS = {
     "tagline": "Building internet credibility"
 }
 
-ITEMS_PER_PAGE = 10
+API_LIMIT_PER_PAGE = 10
+TASTYPIE_DEFAULT_FORMATS = ['json']

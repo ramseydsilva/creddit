@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from utils import redirect
 from utils.breadcrumbs import *
@@ -30,6 +31,7 @@ def category(request, category_slug):
     }
     return render_to_response("posts/category.html", context, context_instance = RequestContext(request))
 
+@csrf_exempt
 def post(request, category_slug, post_slug):
     post = get_object_or_404(Post, slug=post_slug, category__slug=category_slug)
     
@@ -38,10 +40,9 @@ def post(request, category_slug, post_slug):
             raise PermissionDenied # Redirect to login
         
         if request.POST["text"]:
-            reply = Post(text=request.POST["text"], user=request.user, category=post.category)
+            reply = Post(text=request.POST["text"], user=request.user, parent=post)
             reply.save()
-            post.children.add(reply)
-            return redirect(request, url=reverse("post", args=[category_slug, post_slug]))
+            return redirect(request)
             
     context = {
         'post': post,

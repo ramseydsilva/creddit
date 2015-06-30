@@ -2,6 +2,11 @@
 
 {% block title %}{{ block.super }} - {{ post.category.title }}{% endblock %}
 
+{% block extra_head %}
+    <script type="text/javascript">fp = {{ post.id }};</script>
+    {{ block.super }}
+{% endblock %}
+
 {% block content %}
     {{ block.super.super }}
     {% include "includes/post.html" with post=post main=True main_post=post %}

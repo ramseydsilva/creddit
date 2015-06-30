@@ -4,9 +4,12 @@ from django.contrib.auth.models import User
 from sorl.thumbnail import ImageField
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
-from users.models import Subscription
+from users.models import Subscription, Inbox
+from django.template import loader, Context
 import itertools
 
+
+post_template = loader.get_template("includes/post.html")
 
 class Category(models.Model):
     title = models.CharField(max_length=50)
@@ -33,12 +36,13 @@ class Post(models.Model):
     slug = models.SlugField(max_length=500, unique=True, null=True, blank=True)
     text = models.TextField(null=True, blank=True)
     url = models.URLField(max_length=500, null=True, blank=True)
-    category = models.ForeignKey(Category)
+    category = models.ForeignKey(Category, null=True, blank=True)
     thumb = ImageField(upload_to="thumbs", null=True, blank=True)
     user = models.ForeignKey(User, null=True, blank=True)
     credit = models.IntegerField(default=0)
     tags = models.ManyToManyField(Tag, blank=True)
     parent = models.ForeignKey("self", null=True, blank=True, related_name="children")
+    first_parent = models.ForeignKey("self", null=True, blank=True, related_name="all_children")
     created_date = models.DateTimeField(auto_now_add=True)
     subscribers = models.ManyToManyField(User, through='users.Subscription', related_name='subscribed')
     
@@ -48,6 +52,17 @@ class Post(models.Model):
     def __unicode__(self):
         return "%s" % (self.title if self.title else self.text[:20])
 
+    def html(self, user=None):
+        return post_template.render({
+            'post': self,
+            'user': user
+        })
+    
+    def get_first_parent(self):
+        if self.parent:
+            return self.parent.get_first_parent()
+        return self
+    
     def give_credit(self, credit):
         self.credit += credit
         self.save(compute_credit=False)
@@ -81,10 +96,19 @@ class Post(models.Model):
     
     def save(self, compute_credit=True):
         if not self.id:
+            parent = self.get_first_parent()
+            if not self.category:
+                self.category = parent.category
+            try:
+                self.first_parent = parent
+            except ValueError:
+                self.first_parent = None
+                
             if not self.slug:
                 self.slug = self.get_unique_slug(self.title or self.text[:50])
         if compute_credit:
             self.compute_credit(save=False)
+        
         super(Post, self).save()
     
 class Hit(models.Model):

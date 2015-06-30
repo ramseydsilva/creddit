@@ -7,12 +7,17 @@
 <a href="{% url 'post' post.category.slug post.slug %}">Permalink</a>
 {% if post|is_subscribed:user %}
     <a href="{% url 'unsubscribe' post.category.slug post.slug %}?next={{ next }}">Unsubscribe</a>
+    {% if js %}
+        <script type="text/javascript">
+            subscribed.push({{ post.id }});
+        </script>
+    {% endif %}
 {% else %}
     <a href="{% url 'subscribe' post.category.slug post.slug %}?next={{ next }}">Subscribe</a>
 {% endif %}
 {% if main and post.parent %}<a href="{% url 'post' post.parent.category.slug post.parent.slug %}">Parent</a>{% endif %}
 <a href="javascript:document.getElementById('reply-{{ post.id }}').style.display='block'; void(0);">Reply</a>
-<form id="reply-{{ post.id }}" {% if not main %}style="display: none"{% endif %} method="post" action="{{ post.get_absolute_url }}">{% csrf_token %}
+<form id="reply-{{ post.id }}" {% if main %}class="always_show"{% else %}style="display: none"{% endif %} method="post" action="{{ post.get_absolute_url }}">
     <input type="hidden" name="next" value="{{ main_post.get_absolute_url }}" />
     <textarea name="text" rows="3" cols="60"></textarea><br/>
     <input type="submit" value="Submit" />

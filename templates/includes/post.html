@@ -1,6 +1,6 @@
 {% load markdown_deux_tags %}
 
-<div class="post" id="post-{{ post.id }}">
+<div class="post" id="{{ post.id }}">
     <article>
         {% if main %}<h1><a href="{{ post.get_absolute_url }}">{{ post }}</a></h1>{% endif %}
         <p>
