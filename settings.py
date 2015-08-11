@@ -48,9 +48,9 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',  
-            'NAME': 'sprddit',
-            'USER': 'postgres',
-            'PASSWORD': 'postgres', 
+            'NAME': 'creddit',
+            'USER': 'ramsey',
+            'PASSWORD': 'ramseypostgres..', 
             'HOST': 'localhost',
             'PORT': '',  
         }
@@ -138,3 +138,5 @@ SETTINGS = {
 
 API_LIMIT_PER_PAGE = 10
 TASTYPIE_DEFAULT_FORMATS = ['json']
+
+LOGIN_URL = '/login/'
