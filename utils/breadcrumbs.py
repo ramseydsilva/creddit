@@ -31,6 +31,16 @@ def post_breadcrumbs(post, active=True):
     breadcrumbs.append(get_breadcrumb(post, post.get_absolute_url(), active=active))
     return breadcrumbs
 
+def post_edit_breadcrumbs(post, active=True):
+    breadcrumbs = post_breadcrumbs(post)
+    breadcrumbs.append(get_breadcrumb("Edit", reverse("edit", args=[post.category.slug, post.slug]), active=active))
+    return breadcrumbs
+
+def post_delete_breadcrumbs(post, active=True):
+    breadcrumbs = post_breadcrumbs(post)
+    breadcrumbs.append(get_breadcrumb("Delete", reverse("delete", args=[post.category.slug, post.slug]), active=active))
+    return breadcrumbs
+
 def post_credits_breadcrumbs(post, active=True):
     breadcrumbs = post_breadcrumbs(post)
     breadcrumbs.append(get_breadcrumb("Credits", reverse("credits", args=[post.category.slug, post.slug]), active=active))

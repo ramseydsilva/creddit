@@ -6,8 +6,6 @@ import copy
 
 
 class PostResource(ModelResource):
-    parent = fields.IntegerField(attribute="parent__id")
-    user = fields.IntegerField(attribute="user__id")
     
     class Meta:
         queryset = Post.objects.all()
@@ -15,8 +13,13 @@ class PostResource(ModelResource):
         include_resource_uri = True
         authorization = Authorization() # THIS IS IMPORTANT
         always_return_data = True
-    
+
+
     def dehydrate(self, bundle):
+        if bundle.obj.parent:
+            bundle.data['parent'] = bundle.obj.parent.id
+        if bundle.obj.user:
+            bundle.data['user'] = bundle.obj.user.id
         bundle.data['html'] = bundle.obj.html(user=bundle.request.user)
         return bundle
     

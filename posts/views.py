@@ -51,13 +51,57 @@ def post(request, category_slug, post_slug):
     }
     return render_to_response("posts/post.html", context, context_instance = RequestContext(request))
 
+@csrf_exempt
+def edit(request, category_slug, post_slug):
+    post = get_object_or_404(Post, slug=post_slug, category__slug=category_slug)
+
+    if request.user.is_anonymous() or request.user != post.user:
+        raise PermissionDenied # Redirect to login
+        
+    if request.POST:
+        post.text = request.POST["text"]
+        post.edit_count += 1
+        post.save()
+        return redirect(request)
+            
+    context = {
+        'post': post,
+        'category': post.category,
+        'next': request.META['HTTP_REFERER'],
+        'breadcrumbs': post_edit_breadcrumbs(post),
+    }
+    return render_to_response("posts/edit.html", context, context_instance = RequestContext(request))
+
+@csrf_exempt
+def delete(request, category_slug, post_slug):
+    post = get_object_or_404(Post, slug=post_slug, category__slug=category_slug)
+
+    if request.user.is_anonymous() or request.user != post.user:
+        raise PermissionDenied # Redirect to login
+        
+    if request.POST:
+        if not post.children.all() and request.POST["make_anonymous"] == "0":
+            post.delete()
+        else:
+            post.user = None
+            post.save()
+        return redirect(request)
+            
+    context = {
+        'post': post,
+        'category': post.category,
+        'next': request.META['HTTP_REFERER'],
+        'breadcrumbs': post_edit_breadcrumbs(post),
+    }
+    return render_to_response("posts/delete.html", context, context_instance = RequestContext(request))
+
 def credits(request, category_slug, post_slug):
     post = get_object_or_404(Post, slug=post_slug, category__slug=category_slug)
     context = {
         'post': post,
         'category': post.category,
-        'upvotes': Credit.objects.filter(post=post, amount=1),
-        'downvotes': Credit.objects.filter(post=post, amount=-1),
+        'upvotes': Credit.objects.upvotes(post=post),
+        'downvotes': Credit.objects.downvotes(post=post),
         'breadcrumbs': post_credits_breadcrumbs(post)
     }
     return render_to_response("posts/credits.html", context, context_instance = RequestContext(request))

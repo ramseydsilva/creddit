@@ -1,9 +1,17 @@
 {% load post_helper %}
 
-<div class="info">by <a href="{{ post.user.profile.get_absolute_url }}">{{ post.user }}</a> {{ post.created_date|timesince }} ago in <a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></div>
+<div class="info">by {% if post.user %}<a href="{{ post.user.profile.get_absolute_url }}">{{ post.user }}</a>{% else %}anonymous{% endif %} {{ post.created_date|timesince }} ago in <a href="{{ post.category.get_absolute_url }}">{{ post.category }}</a></div>
 <a href="{% url 'credits' post.category.slug post.slug %}">{{ post.credit }}</a>
-<a href="{% url 'upvote' post.category.slug post.slug %}?next={{ next }}">Upvote</a>
-<a href="{% url 'downvote' post.category.slug post.slug %}?next={{ next }}">Downvote</a>
+<a href="{% url 'upvote' post.category.slug post.slug %}?next={{ next }}">
+    {% if post|has_upvoted:user %}Unupvote{% else %}Upvote{% endif %}
+</a>
+<a href="{% url 'downvote' post.category.slug post.slug %}?next={{ next }}">
+    {% if post|has_downvoted:user %}Undownvote{% else %}Downvote{% endif %}
+</a>
+{% if post.user == user %}
+    <a href="{% url 'edit' post.category.slug post.slug %}">Edit</a>
+    <a href="{% url 'delete' post.category.slug post.slug %}">Delete</a>
+{% endif %}
 <a href="{% url 'post' post.category.slug post.slug %}">Permalink</a>
 {% if post|is_subscribed:user %}
     <a href="{% url 'unsubscribe' post.category.slug post.slug %}?next={{ next }}">Unsubscribe</a>
@@ -16,9 +24,4 @@
     <a href="{% url 'subscribe' post.category.slug post.slug %}?next={{ next }}">Subscribe</a>
 {% endif %}
 {% if main and post.parent %}<a href="{% url 'post' post.parent.category.slug post.parent.slug %}">Parent</a>{% endif %}
-<a href="javascript:document.getElementById('reply-{{ post.id }}').style.display='block'; void(0);">Reply</a>
-<form id="reply-{{ post.id }}" {% if main %}class="always_show"{% else %}style="display: none"{% endif %} method="post" action="{{ post.get_absolute_url }}">
-    <input type="hidden" name="next" value="{{ main_post.get_absolute_url }}" />
-    <textarea name="text" rows="3" cols="60"></textarea><br/>
-    <input type="submit" value="Submit" />
-</form>
+<a class="reply" href="javascript:document.getElementById('reply-{{ post.id }}').style.display='block'; void(0);">Reply</a>

@@ -9,7 +9,8 @@ from django.template import loader, Context
 import itertools
 
 
-post_template = loader.get_template("includes/post.html")
+post_full_template = loader.get_template("includes/post.html")
+post_html_template = loader.get_template("includes/post_html.html")
 
 class Category(models.Model):
     title = models.CharField(max_length=50)
@@ -36,7 +37,7 @@ class Post(models.Model):
     slug = models.SlugField(max_length=500, unique=True, null=True, blank=True)
     text = models.TextField(null=True, blank=True)
     url = models.URLField(max_length=500, null=True, blank=True)
-    category = models.ForeignKey(Category, null=True, blank=True)
+    category = models.ForeignKey(Category)
     thumb = ImageField(upload_to="thumbs", null=True, blank=True)
     user = models.ForeignKey(User, null=True, blank=True)
     credit = models.IntegerField(default=0)
@@ -45,6 +46,7 @@ class Post(models.Model):
     first_parent = models.ForeignKey("self", null=True, blank=True, related_name="all_children")
     created_date = models.DateTimeField(auto_now_add=True)
     subscribers = models.ManyToManyField(User, through='users.Subscription', related_name='subscribed')
+    edit_count = models.IntegerField(default=0)
     
     class Meta:
         ordering = ("-credit", "-created_date",)
@@ -53,7 +55,13 @@ class Post(models.Model):
         return "%s" % (self.title if self.title else self.text[:20])
 
     def html(self, user=None):
-        return post_template.render({
+        return post_html_template.render({
+            'post': self,
+            'user': user
+        })
+
+    def full_html(self, user=None):
+        return post_full_template.render({
             'post': self,
             'user': user
         })
@@ -97,8 +105,7 @@ class Post(models.Model):
     def save(self, compute_credit=True):
         if not self.id:
             parent = self.get_first_parent()
-            if not self.category:
-                self.category = parent.category
+            self.category = parent.category
             try:
                 self.first_parent = parent
             except ValueError:
@@ -122,12 +129,19 @@ class Hit(models.Model):
     def __unicode__(self):
         return "%s - %s" % (self.user, self.post)
     
+class CreditManager(models.Manager):
+    def upvotes(self, *args, **kwargs):
+        return self.get_queryset().filter(**kwargs).filter(amount=1)
+    def downvotes(self, *args, **kwargs):
+        return self.get_queryset().filter(**kwargs).filter(amount=-1)
+    
 class Credit(models.Model):
     user = models.ForeignKey(User)
     post = models.ForeignKey(Post, related_name="credit_set")
     amount = models.IntegerField(default=0)
     created_date = models.DateTimeField(auto_now=True)
-
+    objects = CreditManager()
+    
     class Meta:
         ordering = ("-created_date",)
         unique_together = (("user", "post"))
@@ -137,7 +151,8 @@ class Credit(models.Model):
     
     def credit(self, amount=1):
         self.post.give_credit(-self.amount+amount)
-        self.post.user.profile.give_credit(-self.amount+amount)
+        if self.post.user:
+            self.post.user.profile.give_credit(-self.amount+amount)
         self.amount = amount
         self.save()
     
@@ -152,6 +167,7 @@ class Credit(models.Model):
     
     def delete(self, *args, **kwargs):
         self.post.give_credit(-self.amount)
-        self.post.user.profile.give_credit(-self.amount)
+        if self.post.user:
+            self.post.user.profile.give_credit(-self.amount)
         super(Credit, self).delete(*args, **kwargs)
     

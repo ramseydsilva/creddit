@@ -1,0 +1,19 @@
+{% load markdown_deux_tags %}
+
+<article id="{{ post.id }}">
+    {% if main %}<h1><a href="{{ post.get_absolute_url }}">{{ post }}</a></h1>{% endif %}
+    <p>
+        {% if post.url %}<a href="{{ post.url }}">{{ post.url }}</a>{% endif %}
+        {{ post.text|markdown }}
+    </p>
+    <div class="options">
+        {% include "includes/post-info.html" %}
+    </div>
+
+    <form id="reply-{{ post.id }}" {% if main %}class="always_show"{% else %}style="display: none"{% endif %} method="post" action="{{ post.get_absolute_url }}">
+        <input type="hidden" name="next" value="{{ main_post.get_absolute_url }}" />
+        <textarea name="text" rows="3" cols="60"></textarea><br/>
+        <input type="submit" value="Submit" />
+    </form>
+
+</article>

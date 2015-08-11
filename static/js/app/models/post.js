@@ -6,19 +6,12 @@ define([
 
     return Backbone.Model.extend({
         
-        initialize: function() {
-            if (this.attributes.id) {
-                this.renderView();
-            } else {
-                this.once("change:id", this.renderView, this);
-            }
-        },
-
-        renderView: function() {
+        initialize: function(options) {
             this.view = new PostView({
-                el: this.attributes.el || "<li>"+this.attributes.html+"</li>",
+                el: options.el,
                 model: this
-            });
+            });            
+            this.on("change:html", this.view.reRender, this.view);
         }
         
     });

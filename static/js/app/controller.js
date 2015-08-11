@@ -6,11 +6,13 @@ function(Tastypie, PostCollection) {
     "use strict";
     
     app.posts = new PostCollection();
-    $(".post").each(function(i, e) {
+    
+    var first_post = $(".post")[0];
+    if (first_post) {
         app.posts.add({
-            id: parseInt(e.id),
-            el: e
-        })
-    });
+            id: parseInt(first_post.getElementsByTagName("article")[0].id),
+            el: first_post
+        });
+    }
     
 });

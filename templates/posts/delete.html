@@ -1,0 +1,43 @@
+{% extends "posts/category.html" %}
+
+{% load markdown_deux_tags %}
+
+{% block title %}{{ block.super }} - {{ post.category.title }} - Edit{% endblock %}
+
+{% block content %}
+    {{ block.super.super }}
+
+    <article>
+        <h1><a href="{{ post.get_absolute_url }}">{{ post }}</a></h1>
+        <p>
+            {% if post.url %}<a href="{{ post.url }}">{{ post.url }}</a>{% endif %}
+            {{ post.text|markdown }}
+        </p>
+        <form action="." method="post">
+            <table>
+                <tr>
+                    <td>
+                        <input type="radio" name="make_anonymous" value="0" checked=checked> Delete post
+                    </td>
+                </tr>
+                {% if not post.children.all %}
+                <tr>
+                    <td>
+                        <input type="radio" name="make_anonymous" value="1"> Make post anonymous
+                    </td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td>
+                        <input type="hidden" name="next" value="{{ next }}" />
+                        <input type="submit" value="Submit" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <div class="options">
+            {% include "includes/post-info.html" %}
+        </div>
+    </article>
+
+{% endblock %}
